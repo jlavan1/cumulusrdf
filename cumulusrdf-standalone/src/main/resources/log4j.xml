@@ -16,7 +16,7 @@
 	</appender>
 	<category name="edu.kit.aifb.cumulus.cli" additivity="false">
 		<priority value="INFO"/>	
-		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="FILE"/>
    	</category>
 	<root>
 		<priority value="INFO"/>

@@ -64,6 +64,11 @@ public class CumulusRDFSail extends NotifyingSailBase {
 
 	@Override
 	protected boolean isInitialized() {
+		boolean opened = _store.isOpen();
+		if(_valueFactory == null && opened) 
+		{
+			_valueFactory = new CumulusRDFValueFactory(_store.getDictionary());
+		}
 		return _store.isOpen();
 	}
 

@@ -12,6 +12,16 @@ import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.sail.SailRepositoryConnection;
 
+import org.openrdf.query.BindingSet;
+import org.openrdf.query.TupleQuery;
+import org.openrdf.query.TupleQueryResult;
+import org.openrdf.repository.Repository;
+import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.sail.SailRepository;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.sail.memory.MemoryStore;
+import java.io.*;
+
 import edu.kit.aifb.cumulus.cli.log.MessageCatalog;
 import edu.kit.aifb.cumulus.store.Store;
 import edu.kit.aifb.cumulus.store.sesame.CumulusRDFSail;
@@ -52,10 +62,18 @@ public class Query extends Command {
 		SailRepository repo = null;
 		try {
 			final CumulusRDFSail sail = new CumulusRDFSail(store);
-			sail.initialize();
+			//sail.initialize(); //yzyan, remove for java.lang.IllegalStateException: sail has already been intialized
 
 			repo = new SailRepository(sail);
 			con = repo.getConnection();
+			/*
+			File lovData = new File("/home/yzyan/rdf/lov.n3");
+			repo = new SailRepository(new MemoryStore());
+			repo.initialize();
+			con = repo.getConnection();
+            		con.add(lovData, "http://lov.okfn.org/lov.n3.gz", RDFFormat.N3);
+			*/
+
 			org.openrdf.query.Query parsed_query = con.prepareQuery(QueryLanguage.SPARQL, query);
 
 			int i = 0;
@@ -64,11 +82,21 @@ public class Query extends Command {
 				_log.info(MessageCatalog._00019_PARSED_ASK_QUERY, parsed_query);
 				_log.info(MessageCatalog._00020_PARSED_ASK_ANSWER, ((BooleanQuery) parsed_query).evaluate());
 			} else if (parsed_query instanceof TupleQuery) {
-	
+				/*	
 				_log.info(MessageCatalog._00021_PARSED_SELECT_ANSWER);
 				for (final TupleQueryResult result = ((TupleQuery) parsed_query).evaluate(); result.hasNext(); i++) {
 					_log.info(i + ": " + result.next());
 				}
+				*/
+				TupleQueryResult result = ((TupleQuery) parsed_query).evaluate();
+
+			        while(result.hasNext()){
+
+                                    BindingSet bindings = result.next();
+
+		                    System.out.println(bindings);
+                                }
+
 			} else if (parsed_query instanceof GraphQuery) {
 				_log.info(MessageCatalog._00022_CONSTRUCT_ASK_QUERY, parsed_query);
 				_log.info(MessageCatalog._00023_CONSTRUCT_ASK_ANSWER);
