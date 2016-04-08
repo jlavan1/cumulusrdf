@@ -55,7 +55,7 @@ public class Remove extends Command {
 		SailRepositoryConnection con = null;
 		try {
 			CumulusRDFSail sail = new CumulusRDFSail(store);
-			sail.initialize();
+			// sail.initialize(); //yzyan debug
 	
 			repo = new SailRepository(sail);
 			con = repo.getConnection();
