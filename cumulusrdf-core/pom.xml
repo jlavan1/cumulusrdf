@@ -111,21 +111,22 @@
 			<groupId>com.github.jsonld-java</groupId>
 			<artifactId>jsonld-java-sesame</artifactId>
 			<version>0.4.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.openrdf.sesame</groupId>
-					<artifactId>sesame-model</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.openrdf.sesame</groupId>
-					<artifactId>sesame-rio-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
+		<dependency>
+		    <groupId>org.openrdf.sesame</groupId>
+		        <artifactId>sesame-rio-api</artifactId>
+		            <version>${sesame.version}</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.openrdf.sesame</groupId>
+		    <artifactId>sesame-repository-sail</artifactId>
+		      <version>${sesame.version}</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.openrdf.sesame</groupId>
+		    <artifactId>sesame-sail-nativerdf</artifactId>
+		      <version>${sesame.version}</version>
+	     	</dependency>
 		<dependency>
 			<groupId>org.semarglproject</groupId>
 			<artifactId>semargl-rdfa</artifactId>
