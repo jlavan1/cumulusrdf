@@ -44,8 +44,14 @@ public class Benchmark {
 			String indexes = "spoc,posc,cosp";
 			Repository repo = new SailRepository(new NativeStore(dataDir, indexes));
 			repo.initialize();
+			String insert = "PREFIX dc: <http://purl.org/dc/elements/1.1/> INSERT DATA { <http://example/book3> dc:title    \"A new book\" ; dc:creator  \"A.N.Other\"";
 			String query = "select ?s where {?s ?p ?o}";
+			
 			RepositoryConnection con = repo.getConnection();
+			
+			org.openrdf.query.Query parsed_insert = con.prepareQuery(QueryLanguage.SPARQL, insert);
+			TupleQueryResult result_insert = ((TupleQuery) parsed_insert).evaluate();
+
 			org.openrdf.query.Query parsed_query = con.prepareQuery(QueryLanguage.SPARQL, query);
 			int i = 0;
 			if (parsed_query instanceof BooleanQuery) {
