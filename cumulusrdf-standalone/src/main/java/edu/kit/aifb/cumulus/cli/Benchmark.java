@@ -228,7 +228,6 @@ public class Benchmark {
 		SailRepository repo = null;
 
 		try {
-
 			final CumulusRDFSail sail = new CumulusRDFSail(store);
 			sail.initialize(); //yzyan, remove for java.lang.IllegalStateException: sail has already been intialized
 			repo = new SailRepository(sail);
@@ -238,7 +237,25 @@ public class Benchmark {
                         	"SELECT ?X " + 
 				//"FROM  <http://localhost/shoebox> " + 
 				"WHERE {" + 
-				"{ ?X rdf:type ub:GraduateStudent . ?X ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0>} }";
+				"?X rdf:type ub:GraduateStudent . ?X ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0> }";
+				
+			query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+				"prefix ub: <http://swat.cse.lehigh.edu/onto/univ-bench.owl#> " +
+                        	"SELECT ?s ?p ?o " + 
+				"FROM  <http://localhost/shoebox00> " + 
+				"WHERE {" + 
+				"?s ?p ?o }";
+			
+			query = "PREFIX dc: <http://purl.org/dc/elements/1.1/> SELECT ?s ?p ?o " + 
+				//"FROM  <http://localhost/shoebox00> " +
+				"WHERE { <http://example/book3> ?p ?o }";
+
+			String insert_where = generateUpdate(0,0);
+			insert_where = "PREFIX dc: <http://purl.org/dc/elements/1.1/> INSERT DATA { GRAPH <http://localhost/shoebox00> { <http://example/book3> dc:title    \"A new book\" ; dc:creator  \"A.N.Other\"} }";
+
+			org.openrdf.query.Update update_insert = con.prepareUpdate(QueryLanguage.SPARQL, insert_where);
+			update_insert.execute();			
+
 			org.openrdf.query.Query parsed_query = con.prepareQuery(QueryLanguage.SPARQL, query);
 
 			int i = 0;
