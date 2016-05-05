@@ -39,22 +39,45 @@ import org.openrdf.repository.RepositoryConnection;
 
 
 
-public class Benchmark {
+public class QueryDB {
 	
-	static String lubmPrefix = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-                            "prefix ub: <http://swat.cse.lehigh.edu/onto/univ-bench.owl#> ";
-	static String shoeboxPrefix = "http://localhost/shoebox";
-	
-	static String lubmQ1 = "?x rdf:type ub:GraduateStudent . ?x ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0>";
-	static String lubmQ2 = "?x rdf:type ub:GraduateStudent . ?y rdf:type ub:University . ?z rdf:type ub:Department ."
-				+ "?x ub:memberOf ?z . ?z ub:subOrganizationOf ?y . ?x ub:undergraduateDegreeFrom ?y";
-	static String lubmQ3 = "?x rdf:type ub:Publication . ?x ub:publicationAuthor <http://www.Department0.University0.edu/AssistantProfessor0>";
+	public static void main(final String[] args) {
 
-	static String lubmQ4 = "{?x a ub:AssociateProfessor . ?x ub:worksFor <http://www.Department0.University0.edu> . ?x ub:name ?y1 . ?x ub:emailAddress ?y2 . ?x ub:telephone ?y3 . } " 
+		String txt = args[0];
+
+        	System.out.println("To run query:" + txt); 
+
+		String queryString = "";
+        	switch (txt) {
+			case "0":
+				queryString = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+				"prefix ub: <http://swat.cse.lehigh.edu/onto/univ-bench.owl#> " +
+                        	"SELECT ?x WHERE { ?x rdf:type ub:GraduateStudent . ?x ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0>}"; 
+				break;
+			case "1":
+				queryString = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "  PREFIX ub: <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>"
+				+ "SELECT ?x ?y ?z WHERE {?x rdf:type ub:GraduateStudent . ?y rdf:type ub:University . ?z rdf:type ub:Department ."
+				+ "?x ub:memberOf ?z . ?z ub:subOrganizationOf ?y . ?x ub:undergraduateDegreeFrom ?y } ";
+				break;
+			case "2":
+				queryString =  "  PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "  PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>"
+				+ " SELECT ?x WHERE {?x rdf:type ub:Publication . ?x ub:publicationAuthor <http://www.Department0.University0.edu/AssistantProfessor0>}";
+				break;
+			case "3":
+				queryString = "  PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "  PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>"
+				+ "SELECT ?x ?y1 ?y2 ?y3  WHERE { " 
+				+ "{ ?x a ub:AssociateProfessor . ?x ub:worksFor <http://www.Department0.University0.edu> . ?x ub:name ?y1 . ?x ub:emailAddress ?y2 . ?x ub:telephone ?y3 . } " 
 				+ "union { ?x a ub:AssistantProfessor . ?x ub:worksFor <http://www.Department0.University0.edu> . ?x ub:name ?y1 . ?x ub:emailAddress ?y2 . ?x ub:telephone ?y3 . } "
-				+ "union { ?x a ub:FullProfessor . ?x ub:worksFor <http://www.Department0.University0.edu> . ?x ub:name ?y1 . ?x ub:emailAddress ?y2 . ?x ub:telephone ?y3 . } ";
-
-	static String lubmQ5 = " { ?x a ub:AssociateProfessor . ?x ub:memberOf <http://www.Department0.University0.edu> } union "
+				+ "union { ?x a ub:FullProfessor . ?x ub:worksFor <http://www.Department0.University0.edu> . ?x ub:name ?y1 . ?x ub:emailAddress ?y2 . ?x ub:telephone ?y3 . } }";
+				break;
+			case "4":
+				queryString = "  PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "  PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>"
+				+ " select distinct * where { "
+				+ " { ?x a ub:AssociateProfessor . ?x ub:memberOf <http://www.Department0.University0.edu> } union "
 				+ " { ?x a ub:FullProfessor . ?x ub:memberOf <http://www.Department0.University0.edu> } union "
 				+ " { ?x a ub:AssistantProfessor . ?x ub:memberOf <http://www.Department0.University0.edu> } union "
 				+ " { ?x a ub:Lecturer . ?x ub:memberOf <http://www.Department0.University0.edu> } union "
@@ -77,20 +100,35 @@ public class Benchmark {
 				+ " { ?x a ub:UndergraduateStudent . ?x ub:headOf <http://www.Department0.University0.edu> } union "
 				+ " { ?x a ub:GraduateStudent . ?x ub:headOf <http://www.Department0.University0.edu> } union "
 				+ " { ?x a ub:TeachingAssistant . ?x ub:headOf <http://www.Department0.University0.edu> } union "
-				+ " { ?x a ub:ResearchAssistant . ?x ub:headOf <http://www.Department0.University0.edu> } ";
-
-	static String lubmQ6 = " { ?x a ub:UndergraduateStudent . } union "
+				+ " { ?x a ub:ResearchAssistant . ?x ub:headOf <http://www.Department0.University0.edu> } "
+				+ "   }        ";
+				break;
+			case "5":
+				queryString = "  PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "  PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>"
+				+ " SELECT distinct * WHERE { "
+				+ " { ?x a ub:UndergraduateStudent . } union "
 				+ " { ?x a ub:ResearchAssistant . } union "
-				+ " { ?x a ub:GraduateStudent . } ";
-
-	static String lubmQ7 = " {  ?x a ub:UndergraduateStudent . ?y a ub:Course . <http://www.Department0.University0.edu/AssociateProfessor0> ub:teacherOf ?y . ?x ub:takesCourse ?y . } union "
+				+ " { ?x a ub:GraduateStudent . } "
+				+ "   }        ";
+				break;
+			case "6":
+				queryString = "  PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "  PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>"
+				+ " SELECT distinct * WHERE {" 
+				+ " {  ?x a ub:UndergraduateStudent . ?y a ub:Course . <http://www.Department0.University0.edu/AssociateProfessor0> ub:teacherOf ?y . ?x ub:takesCourse ?y . } union "
 				+ " {  ?x a ub:UndergraduateStudent . ?y a ub:GraduateCourse . <http://www.Department0.University0.edu/AssociateProfessor0> ub:teacherOf ?y . ?x ub:takesCourse ?y . } union "
 				+ " {  ?x a ub:ResearchAssistant . ?y a ub:Course . <http://www.Department0.University0.edu/AssociateProfessor0> ub:teacherOf ?y . ?x ub:takesCourse ?y . } union "
 				+ " {  ?x a ub:ResearchAssistant . ?y a ub:GraduateCourse . <http://www.Department0.University0.edu/AssociateProfessor0> ub:teacherOf ?y . ?x ub:takesCourse ?y . } union "
 				+ " {  ?x a ub:GraduateStudent . ?y a ub:Course . <http://www.Department0.University0.edu/AssociateProfessor0> ub:teacherOf ?y . ?x ub:takesCourse ?y . } union"
-				+ " {  ?x a ub:GraduateStudent . ?y a ub:GraduateCourse . <http://www.Department0.University0.edu/AssociateProfessor0> ub:teacherOf ?y . ?x ub:takesCourse ?y . } ";
-
-	static String lubmQ8 = " { ?x a ub:UndergraduateStudent . ?y a ub:Department . ?x ub:memberOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . ?x ub:emailAddress ?z } union "
+				+ " {  ?x a ub:GraduateStudent . ?y a ub:GraduateCourse . <http://www.Department0.University0.edu/AssociateProfessor0> ub:teacherOf ?y . ?x ub:takesCourse ?y . } "
+				+ "   }        ";
+				break;
+			case "7":
+				queryString = "  PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "  PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>"
+				+ " SELECT distinct * WHERE { " 
+				+ " { ?x a ub:UndergraduateStudent . ?y a ub:Department . ?x ub:memberOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . ?x ub:emailAddress ?z } union "
 				+ " { ?x a ub:UndergraduateStudent . ?y a ub:Department . ?x ub:worksFor ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . ?x ub:emailAddress ?z } union "
 				+ " { ?x a ub:UndergraduateStudent . ?y a ub:Department . ?x ub:headOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . ?x ub:emailAddress ?z } union "
 				+ " { ?x a ub:ResearchAssistant . ?y a ub:Department . ?x ub:memberOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . ?x ub:emailAddress ?z } union "
@@ -98,9 +136,14 @@ public class Benchmark {
 				+ " { ?x a ub:ResearchAssistant . ?y a ub:Department . ?x ub:headOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . ?x ub:emailAddress ?z } union "
 				+ " { ?x a ub:GraduateStudent . ?y a ub:Department . ?x ub:memberOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . ?x ub:emailAddress ?z } union "
 				+ " { ?x a ub:GraduateStudent . ?y a ub:Department . ?x ub:worksFor ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . ?x ub:emailAddress ?z } union "
-				+ " { ?x a ub:GraduateStudent . ?y a ub:Department . ?x ub:headOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . ?x ub:emailAddress ?z } ";
-
-	static String lubmQ9 = " { ?x a ub:ResearchAssistant . ?y a ub:Lecturer . ?z a ub:Course . ?x ub:advisor ?y . ?x ub:takesCourse ?z . ?y ub:teacherOf ?z . } union "
+				+ " { ?x a ub:GraduateStudent . ?y a ub:Department . ?x ub:headOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . ?x ub:emailAddress ?z } "
+				+ "   }        ";
+				break;
+			case "8":
+				queryString = "  PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "  PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>"
+				+ " SELECT distinct * WHERE { "
+				+ " { ?x a ub:ResearchAssistant . ?y a ub:Lecturer . ?z a ub:Course . ?x ub:advisor ?y . ?x ub:takesCourse ?z . ?y ub:teacherOf ?z . } union "
 				+ " { ?x a ub:ResearchAssistant . ?y a ub:PostDoc . ?z a ub:Course . ?x ub:advisor ?y . ?x ub:takesCourse ?z . ?y ub:teacherOf ?z . } union "
 				+ " { ?x a ub:ResearchAssistant . ?y a ub:VisitingProfessor . ?z a ub:Course . ?x ub:advisor ?y . ?x ub:takesCourse ?z . ?y ub:teacherOf ?z . } union "
 				+ " { ?x a ub:ResearchAssistant . ?y a ub:AssistantProfessor . ?z a ub:Course . ?x ub:advisor ?y . ?x ub:takesCourse ?z . ?y ub:teacherOf ?z . } union "
@@ -135,20 +178,39 @@ public class Benchmark {
 				+ " { ?x a ub:GraduateStudent . ?y a ub:VisitingProfessor . ?z a ub:GraduateCourse . ?x ub:advisor ?y . ?x ub:takesCourse ?z . ?y ub:teacherOf ?z . } union "
 				+ " { ?x a ub:GraduateStudent . ?y a ub:AssistantProfessor . ?z a ub:GraduateCourse . ?x ub:advisor ?y . ?x ub:takesCourse ?z . ?y ub:teacherOf ?z . } union "
 				+ " { ?x a ub:GraduateStudent . ?y a ub:AssociateProfessor . ?z a ub:GraduateCourse . ?x ub:advisor ?y . ?x ub:takesCourse ?z . ?y ub:teacherOf ?z . } union "
-				+ " { ?x a ub:GraduateStudent . ?y a ub:FullProfessor . ?z a ub:GraduateCourse . ?x ub:advisor ?y . ?x ub:takesCourse ?z . ?y ub:teacherOf ?z . } ";
-
-	static String lubmQ10 = " { ?x a ub:ResearchAssistant . ?x ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0> . } union "
+				+ " { ?x a ub:GraduateStudent . ?y a ub:FullProfessor . ?z a ub:GraduateCourse . ?x ub:advisor ?y . ?x ub:takesCourse ?z . ?y ub:teacherOf ?z . } "
+				+ "   }        ";
+					break;
+			case "9":
+				queryString = "  PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "  PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>"
+				+ " SELECT * WHERE {  "
+				+ " { ?x a ub:ResearchAssistant . ?x ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0> . } union "
 				+ " { ?x a ub:UndergraduateStudent . ?x ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0> . } union "
-				+ " { ?x a ub:GraduateStudent . ?x ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0> . } ";
-
-	static String lubmQ11 =  "?x rdf:type ub:ResearchGroup . ?x ub:subOrganizationOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> ";
-
-	static String lubmQ12 = " { ?x a ub:FullProfessor . ?y a ub:Department . ?x ub:headOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . } union "
+				+ " { ?x a ub:GraduateStudent . ?x ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0> . } "
+				+ "   }        ";
+				
+				break;
+			case "10":
+				queryString = "  PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "  PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>"
+				+ " SELECT ?x WHERE { ?x rdf:type ub:ResearchGroup . ?x ub:subOrganizationOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> "
+				+ "   }        ";
+				break;
+			case "11":
+				queryString = "  PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "  PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>"
+				+ " SELECT * WHERE { "
+				+ " { ?x a ub:FullProfessor . ?y a ub:Department . ?x ub:headOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . } union "
 				+ " { ?x a ub:AssistantProfessor . ?y a ub:Department . ?x ub:headOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . } union "
-				+ " { ?x a ub:AssociateProfessor . ?y a ub:Department . ?x ub:headOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . } "; 
-
-
-	static String lubmQ13 = " { ?x a ub:AssociateProfessor . ?x ub:doctoralDegreeFrom <http://www.University0.edu> . } union "
+				+ " { ?x a ub:AssociateProfessor . ?y a ub:Department . ?x ub:headOf ?y . ?y ub:subOrganizationOf <http://www.University0.edu> . } "
+				+ "   }        ";
+				break;
+			case "12":
+				queryString = "  PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "  PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>"
+				+ " SELECT * WHERE { " 
+				+ " { ?x a ub:AssociateProfessor . ?x ub:doctoralDegreeFrom <http://www.University0.edu> . } union "
 				+ " { ?x a ub:FullProfessor . ?x ub:doctoralDegreeFrom <http://www.University0.edu> . } union "
 				+ " { ?x a ub:AssistantProfessor . ?x ub:doctoralDegreeFrom <http://www.University0.edu> . } union "
 				+ " { ?x a ub:Lecturer . ?x ub:doctoralDegreeFrom <http://www.University0.edu> . } union "
@@ -171,48 +233,17 @@ public class Benchmark {
 				+ " { ?x a ub:UndergraduateStudent . ?x ub:undergraduateDegreeFrom <http://www.University0.edu> . } union "
 				+ " { ?x a ub:GraduateStudent . ?x ub:undergraduateDegreeFrom <http://www.University0.edu> . } union "
 				+ " { ?x a ub:TeachingAssistant . ?x ub:undergraduateDegreeFrom <http://www.University0.edu> . } union "
-				+ " { ?x a ub:ResearchAssistant . ?x ub:undergraduateDegreeFrom <http://www.University0.edu> . } ";
+				+ " { ?x a ub:ResearchAssistant . ?x ub:undergraduateDegreeFrom <http://www.University0.edu> . } "
+				+ "   }        ";
+				break;
+			case "13":
+				queryString = "  PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "  PREFIX ub:   <http://swat.cse.lehigh.edu/onto/univ-bench.owl#>"
+				+ " SELECT ?x WHERE { ?x rdf:type ub:UndergraduateStudent } ";
+				break;
 
-	static String lubmQ14 = "?x rdf:type ub:UndergraduateStudent";
-
-	static String[] allLUBMQueries = {lubmQ1,lubmQ2,lubmQ3,lubmQ4,lubmQ5,lubmQ6,lubmQ7,lubmQ8,lubmQ9,lubmQ10,lubmQ11,lubmQ12,lubmQ13,lubmQ14};
-
-	static String generateUpdate(int idxA, int idxB) {
-
-		String ret = lubmPrefix +
-			     	" INSERT { GRAPH <" +
-				shoeboxPrefix + idxA + idxB + 
-				"> " +
-				" { " +  allLUBMQueries[idxA] + " } " +
-				" } WHERE " +
-				" { " + 
-				allLUBMQueries[idxB] +
-				" } ";
-
-		System.out.println(ret);
-		return ret;
-	} 
-
-	static String generateQuery(int idxA, int idxB) {
-
-		String ret = "";
-
-		return ret;
-	}
-	
-	public static void main(final String[] args) {
-
-		//Log _log = new Log(LoggerFactory.getLogger(Cirrus.class));
-
-		/*
-		if (args.length < 1) {
-			System.out.println("Please pass args");;
-			System.exit(1);
 		}
-		*/
 
-		int row = Integer.parseInt(args[0]);
-		int col = Integer.parseInt(args[1]);
 
 		Store store = new TripleStore();
 		try {
@@ -235,33 +266,8 @@ public class Benchmark {
 			sail.initialize(); //yzyan, remove for java.lang.IllegalStateException: sail has already been intialized
 			repo = new SailRepository(sail);
 			con = repo.getConnection();
-			/*
-			String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-				"prefix ub: <http://swat.cse.lehigh.edu/onto/univ-bench.owl#> " +
-                        	"SELECT ?X " + 
-				//"FROM  <http://localhost/shoebox> " + 
-				"WHERE {" + 
-				"?X rdf:type ub:GraduateStudent . ?X ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0> }";
-				
-			query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-				"prefix ub: <http://swat.cse.lehigh.edu/onto/univ-bench.owl#> " +
-                        	"SELECT ?s ?p ?o " + 
-				"FROM  <http://localhost/shoebox00> " + 
-				"WHERE {" + 
-				"?s ?p ?o }";
-			
-			query = "PREFIX dc: <http://purl.org/dc/elements/1.1/> SELECT ?s ?p ?o " + 
-				//"FROM  <http://localhost/shoebox00> " +
-				"WHERE { <http://example/book3> ?p ?o }";
-			*/
 
-			String insert_where = generateUpdate(row,col);
-
-			org.openrdf.query.Update update_insert = con.prepareUpdate(QueryLanguage.SPARQL, insert_where);
-			update_insert.execute();			
-
-			/*
-			org.openrdf.query.Query parsed_query = con.prepareQuery(QueryLanguage.SPARQL, query);
+			org.openrdf.query.Query parsed_query = con.prepareQuery(QueryLanguage.SPARQL, queryString);
 
 			int i = 0;
 			if (parsed_query instanceof TupleQuery) {
@@ -269,7 +275,6 @@ public class Benchmark {
 					System.out.println(i + ": " + result.next());
 				}
 			} 
-			*/
 
 			try { con.close(); } catch (Exception ignore) {};
                         try { repo.shutDown(); } catch (Exception ignore) {};
