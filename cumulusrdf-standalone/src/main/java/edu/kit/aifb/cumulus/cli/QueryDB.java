@@ -260,7 +260,7 @@ public class QueryDB {
 
 		SailRepositoryConnection con = null;
 		SailRepository repo = null;
-
+		long before = System.currentTimeMillis();
 		try {
 			final CumulusRDFSail sail = new CumulusRDFSail(store);
 			sail.initialize(); //yzyan, remove for java.lang.IllegalStateException: sail has already been intialized
@@ -272,9 +272,12 @@ public class QueryDB {
 			int i = 0;
 			if (parsed_query instanceof TupleQuery) {
 				for (final TupleQueryResult result = ((TupleQuery) parsed_query).evaluate(); result.hasNext(); i++) {
-					System.out.println(i + ": " + result.next());
+					result.next();
+					//System.out.println(i + ": " + result.next());
 				}
 			} 
+			long after = System.currentTimeMillis();
+			System.out.println("Finish query: "+ (after-before));
 
 			try { con.close(); } catch (Exception ignore) {};
                         try { repo.shutDown(); } catch (Exception ignore) {};
