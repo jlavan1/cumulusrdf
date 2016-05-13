@@ -85,7 +85,7 @@ cassandra-keyspace: "KeyspaceCumulus"
 # Number of replicas across the cassandra cluster.
 # This is valid for Cassandra 1.2.x and Cassandra 2.x 
 # Default value: 1.
-cassandra-replication-factor: 3
+cassandra-replication-factor: 1
 
 # Cassandra read consistency.
 # Default value: ONE.
